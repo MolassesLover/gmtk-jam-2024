@@ -13,3 +13,11 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Nix
+result
+
+# Build directories
+[Bb]in/
+[Bb]uild/
+[Tt]arget/
