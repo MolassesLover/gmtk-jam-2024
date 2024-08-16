@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://ldon2pgvx05l"]
+[gd_scene load_steps=14 format=3 uid="uid://ldon2pgvx05l"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_mn5xw"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_5urp1"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="1_lbevv"]
+[ext_resource type="Script" path="res://player_movement.gd" id="1_lifww"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="2_cvuwf"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="3_yspy8"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_utoy0"]
 
@@ -18,17 +19,29 @@ sky_material = SubResource("ProceduralSkyMaterial_nmtng")
 background_mode = 2
 sky = SubResource("Sky_p3ejp")
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_rqb4j"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ta86y"]
+
+[sub_resource type="Resource" id="Resource_uld6t"]
+script = ExtResource("2_cvuwf")
+duration = 1.0
+transition = 0
+ease = 2
+
+[sub_resource type="Resource" id="Resource_b3muw"]
+script = ExtResource("3_yspy8")
+cull_mask = 1048575
+h_offset = 0.0
+v_offset = 0.0
+projection = 0
+fov = 75.0
+size = 1.0
+frustum_offset = Vector2(0, 0)
+near = 0.05
+far = 4000.0
+
 [node name="Node3D" type="Node3D"]
-
-[node name="RigidBody3D" type="RigidBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
-mesh = SubResource("BoxMesh_mn5xw")
-skeleton = NodePath("../..")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
-shape = SubResource("BoxShape3D_5urp1")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
@@ -39,10 +52,32 @@ mesh = SubResource("PlaneMesh_utoy0")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_dyxvj")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 6)
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_aosoq")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+script = ExtResource("1_lifww")
+speed = 7
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_rqb4j")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_ta86y")
+
+[node name="PhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+script = ExtResource("1_lbevv")
+follow_mode = 5
+follow_target = NodePath("../CharacterBody3D")
+look_at_mode = 2
+tween_resource = SubResource("Resource_uld6t")
+camera_3d_resource = SubResource("Resource_b3muw")
+
+[node name="Camera3D" type="Camera3D" parent="PhantomCamera3D"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 7, 6)
