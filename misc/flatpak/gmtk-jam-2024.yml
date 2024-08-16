@@ -1,0 +1,18 @@
+id: love.molasses.gmtk-jam-2024
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: gmtk-jam-2024.x86_64
+finish-args:
+  - --device=dri
+  - --share=ipc
+  - --socket=pulseaudio
+  - --socket=x11
+modules:
+  - name: gmtk-jam-2024
+    buildsystem: simple
+    build-commands:
+      - install -D gmtk-jam-2024.x86_64 /app/bin/gmtk-jam-2024.x86_64
+    sources:
+      - type: file
+        path: ../../gmtk-jam-2024.x86_64
